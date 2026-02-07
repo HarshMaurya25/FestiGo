@@ -3,9 +3,9 @@ spring:
     name: FestiGo
 
   datasource:
-    url: jdbc:postgresql://localhost:4545/festigo_db?serverTimezone=UTC
-    username: festigo
-    password: festigo_password
+    url: jdbc:postgresql://aws-1-ap-south-1.pooler.supabase.com:5432/postgres
+    username: postgres.yupipxqszgjkhflrbyib
+    password: "1@mh@r$h05_$up@"
 
   jpa:
     hibernate:
@@ -33,3 +33,7 @@ cloudinary:
     wspnr0RJOax4NHQGn6dN8ykpUqc
 
     # $env:JAVA_TOOL_OPTIONS='-Duser.timezone=UTC'; .\mvnw.cmd
+
+app:
+  # Public domain for the running application (used for CORS and generated links)
+  domain: https://festigo-production-f9c6.up.railway.app

@@ -57,6 +57,52 @@
       .section-header a:hover {
         text-decoration: underline;
       }
+
+      /* Marquee overrides for dashboard */
+      .marquee-section {
+        padding: 0 20px 2rem;
+      }
+      .marquee-container {
+        overflow: hidden;
+      }
+      .marquee-track {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        padding: 1rem 0;
+      }
+      .marquee-item {
+        flex: 0 0 420px;
+        width: 420px;
+        height: 360px;
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+      }
+      .marquee-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        border-radius: 12px;
+      }
+      .marquee-dots {
+        display: flex;
+        justify-content: center;
+        gap: 0.6rem;
+        margin-top: 12px;
+      }
+      .marquee-dot {
+        width: 8px;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.35);
+        border-radius: 50%;
+      }
+      .marquee-dot.active {
+        width: 20px;
+        background: #a855f7;
+        border-radius: 4px;
+      }
       /* Amazon-style horizontal slider */
       .recommendation-slider {
         position: relative;
@@ -309,15 +355,18 @@
         <a href="create-event.html">Create Event</a>
       </div>
 
-      <!-- Popular Events Section -->
+      <!-- Popular Events Section (Marquee Carousel) -->
       <div class="section-header">
         <h2>🔥 Popular Upcoming Events</h2>
         <a href="events.html">View All →</a>
       </div>
-      <section class="featured-events">
-        <div class="event-grid" id="popularGrid">
-          <div class="loading-section">Loading popular events...</div>
+      <section class="marquee-section">
+        <div class="marquee-container">
+          <div class="marquee-track" id="popularTrack">
+            <div class="loading-section">Loading popular events...</div>
+          </div>
         </div>
+        <div class="marquee-dots" id="marqueeDots"></div>
       </section>
 
       <!-- Personalized Recommendations Section - Amazon-style Slider -->
@@ -497,29 +546,129 @@
         window.location.href = `/DBMS-mini-main/fest-detail.html?id=${id}`;
       }
 
+      function renderMarqueeItem(event) {
+        const defaultImage =
+          "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1200&h=800&fit=crop";
+        return `
+          <div class="marquee-item" onclick="viewEvent('${event.id}')">
+            <img src="${event.imageUrl || defaultImage}" alt="${event.name}" onerror="this.src='${defaultImage}'" />
+          </div>
+        `;
+      }
+
+      function setupMarqueeSlider(track, events) {
+        const dotsContainer = document.getElementById("marqueeDots");
+        if (!dotsContainer || !track) return;
+        dotsContainer.innerHTML = "";
+        let itemWidth =
+          track.querySelector(".marquee-item")?.offsetWidth || 420;
+        let index = 0;
+        let intervalId = null;
+
+        function activateDot(i) {
+          dotsContainer.querySelectorAll(".marquee-dot").forEach((d, idx) => {
+            d.classList.toggle("active", idx === i);
+          });
+        }
+
+        // create dots
+        events.forEach((_, i) => {
+          const dot = document.createElement("div");
+          dot.className = "marquee-dot";
+          dot.addEventListener("click", () => {
+            // recalc itemWidth in case layout shifted
+            itemWidth =
+              track.querySelector(".marquee-item")?.offsetWidth || itemWidth;
+            track.scrollTo({ left: i * (itemWidth + 16), behavior: "smooth" });
+            index = i;
+            activateDot(i);
+            resetInterval();
+          });
+          dotsContainer.appendChild(dot);
+        });
+        activateDot(0);
+
+        function step() {
+          // ensure width is up-to-date
+          itemWidth =
+            track.querySelector(".marquee-item")?.offsetWidth || itemWidth;
+          index = (index + 1) % events.length;
+          track.scrollTo({
+            left: index * (itemWidth + 16),
+            behavior: "smooth",
+          });
+          activateDot(index);
+        }
+
+        function resetInterval() {
+          if (intervalId) clearInterval(intervalId);
+          intervalId = setInterval(step, 3200);
+        }
+
+        // Recalculate sizes after browser paints to avoid 0-width issues
+        requestAnimationFrame(() => {
+          itemWidth =
+            track.querySelector(".marquee-item")?.offsetWidth || itemWidth;
+          // align to start
+          track.scrollTo({ left: 0, behavior: "auto" });
+        });
+
+        track.addEventListener("mouseenter", () => {
+          if (intervalId) clearInterval(intervalId);
+        });
+        track.addEventListener("mouseleave", () => {
+          resetInterval();
+        });
+
+        // Start auto-play
+        resetInterval();
+
+        // Ensure dots reflect initial width if items resize
+        window.addEventListener("resize", () => {
+          itemWidth =
+            track.querySelector(".marquee-item")?.offsetWidth || itemWidth;
+        });
+      }
+
       async function loadPopularEvents() {
+        const track = document.getElementById("popularTrack");
         const grid = document.getElementById("popularGrid");
         try {
-          // Try popular endpoint first
-          let resp = await fetch(`/api/fests/popular?limit=6`);
+          let resp = await fetch(`${API_BASE}/fests/popular?limit=10`);
+          console.debug("Popular endpoint response status", resp.status);
           if (!resp.ok) {
-            // Fallback to upcoming endpoint
-            resp = await fetch(`/api/fests/upcoming`);
+            resp = await fetch(`${API_BASE}/fests/upcoming`);
+            console.debug(
+              "Fallback upcoming endpoint response status",
+              resp.status,
+            );
           }
           if (!resp.ok) throw new Error("Failed to load");
           const events = await resp.json();
+          console.debug(
+            "Popular events loaded, count=",
+            events && events.length,
+          );
 
           if (!events || events.length === 0) {
-            grid.innerHTML =
+            track.innerHTML =
               '<div class="no-events"><p>No upcoming events. Check back later!</p></div>';
             return;
           }
 
-          grid.innerHTML = events.slice(0, 6).map(renderEventCard).join("");
+          const slice = events.slice(0, 10);
+          track.innerHTML = slice.map(renderMarqueeItem).join("");
+          setupMarqueeSlider(track, slice);
+
+          // Also populate grid fallback (visible on some layouts)
+          if (grid)
+            grid.innerHTML = slice.slice(0, 6).map(renderEventCard).join("");
         } catch (err) {
           console.error("Load popular error:", err);
-          grid.innerHTML =
-            '<div class="no-events"><p>Unable to load events. Please try refreshing.</p></div>';
+          if (grid)
+            grid.innerHTML =
+              '<div class="no-events"><p>Unable to load events. Please try refreshing.</p></div>';
+          if (track) track.innerHTML = "";
         }
       }
 

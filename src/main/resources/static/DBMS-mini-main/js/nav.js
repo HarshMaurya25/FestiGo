@@ -134,6 +134,14 @@
 
     // Add search bar to navbar
     addNavSearch();
+    // Make logo navigate to dashboard
+    const logoEl = document.querySelector(".logo");
+    if (logoEl) {
+      logoEl.style.cursor = "pointer";
+      logoEl.addEventListener("click", function () {
+        window.location.href = "/DBMS-mini-main/dashboard.html";
+      });
+    }
   }
 
   // Run when DOM is ready
