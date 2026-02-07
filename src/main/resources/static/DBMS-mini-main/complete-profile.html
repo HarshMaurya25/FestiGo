@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Complete Profile - EventHub</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body,
+      html {
+        height: 100%;
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+      .auth-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .auth-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        width: 100%;
+        max-width: 520px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+      }
+      .auth-card h1 {
+        text-align: center;
+        color: #1f2937;
+        margin-bottom: 8px;
+        font-size: 28px;
+      }
+      .auth-card .subtitle {
+        text-align: center;
+        color: #6b7280;
+        margin-bottom: 30px;
+        font-size: 14px;
+      }
+      .steps {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 24px;
+        gap: 12px;
+      }
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #9ca3af;
+        font-size: 13px;
+      }
+      .step.completed {
+        color: #059669;
+      }
+      .step.active {
+        color: #667eea;
+        font-weight: 600;
+      }
+      .step .num {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .step.completed .num {
+        background: #059669;
+        color: white;
+      }
+      .step.active .num {
+        background: #667eea;
+        color: white;
+      }
+      .step-line {
+        width: 40px;
+        height: 2px;
+        background: #e5e7eb;
+        align-self: center;
+      }
+      .step-line.done {
+        background: #059669;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        color: #374151;
+        font-weight: 500;
+        font-size: 14px;
+      }
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.2s;
+        background: white;
+      }
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+      .form-group input.error {
+        border-color: #dc2626;
+        background: #fef2f2;
+      }
+      .error-message {
+        color: #dc2626;
+        font-size: 12px;
+        margin-top: 4px;
+      }
+      .btn-submit {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+      }
+      .btn-submit:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+      }
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: #1f2937;
+        color: #f9fafb;
+        padding: 12px 20px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .toast.show {
+        opacity: 1;
+      }
+      .toast.error {
+        background: #dc2626;
+      }
+      .toast.success {
+        background: #059669;
+      }
+      .site-footer {
+        background: #0b0b0b;
+        color: #f8fafc;
+        padding: 1rem 0;
+        text-align: center;
+      }
+      .site-footer a {
+        color: #9ca3af;
+        text-decoration: none;
+        margin: 0 12px;
+        font-size: 14px;
+      }
+      .welcome-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="welcome-badge" id="welcomeBadge">Welcome!</div>
+
+        <h1>Complete Your Profile</h1>
+        <p class="subtitle">Tell us more about yourself</p>
+
+        <div class="steps">
+          <div class="step completed">
+            <span class="num">✓</span>
+            <span>Account</span>
+          </div>
+          <div class="step-line done"></div>
+          <div class="step active">
+            <span class="num">2</span>
+            <span>Profile</span>
+          </div>
+        </div>
+
+        <form id="profileForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name *</label>
+              <input type="text" id="firstName" placeholder="John" required />
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name *</label>
+              <input type="text" id="lastName" placeholder="Doe" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" placeholder="+91 98765 43210" />
+            </div>
+            <div class="form-group">
+              <label for="dob">Date of Birth</label>
+              <input type="date" id="dob" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" id="address" placeholder="123 Main Street" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="city">City</label>
+              <input type="text" id="city" placeholder="Mumbai" />
+            </div>
+            <div class="form-group">
+              <label for="state">State</label>
+              <input type="text" id="state" placeholder="Maharashtra" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="country">Country</label>
+            <input type="text" id="country" placeholder="India" />
+          </div>
+
+          <button type="submit" class="btn-submit" id="submitBtn">
+            Complete Registration
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <span>© 2026 EventHub</span>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+      <a href="#">Privacy</a>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="/env/config.js"></script>
+    <script>
+      const API_BASE = (window.__ENV && window.__ENV.API_BASE_URL) || "/api";
+
+      // Check if user is logged in
+      function getAuth() {
+        try {
+          return JSON.parse(localStorage.getItem("auth"));
+        } catch {
+          return null;
+        }
+      }
+
+      const auth = getAuth();
+      if (!auth || !auth.id) {
+        window.location.href = "/DBMS-mini-main/register-full.html";
+      }
+
+      // Show user's email in welcome badge
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      if (user.email) {
+        document.getElementById("welcomeBadge").textContent =
+          `Welcome, ${user.email}!`;
+      }
+
+      function showToast(message, type = "info") {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.className = "toast show " + type;
+        setTimeout(() => (toast.className = "toast"), 3000);
+      }
+
+      function showFieldError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        field.classList.add("error");
+        const existing = field.parentNode.querySelector(".error-message");
+        if (existing) existing.remove();
+        const err = document.createElement("div");
+        err.className = "error-message";
+        err.textContent = message;
+        field.parentNode.appendChild(err);
+      }
+
+      function clearErrors() {
+        document
+          .querySelectorAll(".error")
+          .forEach((el) => el.classList.remove("error"));
+        document
+          .querySelectorAll(".error-message")
+          .forEach((el) => el.remove());
+      }
+
+      function updateAuth(user) {
+        const authData = {
+          id: user.id,
+          role: user.role,
+          profileCompleted: user.profileCompleted,
+        };
+        localStorage.setItem("auth", JSON.stringify(authData));
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+
+      document
+        .getElementById("profileForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          clearErrors();
+
+          const firstName = document.getElementById("firstName").value.trim();
+          const lastName = document.getElementById("lastName").value.trim();
+          const phone = document.getElementById("phone").value.trim();
+          const dob = document.getElementById("dob").value;
+          const address = document.getElementById("address").value.trim();
+          const city = document.getElementById("city").value.trim();
+          const state = document.getElementById("state").value.trim();
+          const country = document.getElementById("country").value.trim();
+          const btn = document.getElementById("submitBtn");
+
+          let valid = true;
+
+          if (!firstName) {
+            showFieldError("firstName", "First name is required");
+            valid = false;
+          }
+
+          if (!lastName) {
+            showFieldError("lastName", "Last name is required");
+            valid = false;
+          }
+
+          // DOB validation: must be at least 10 years old
+          if (dob) {
+            const dobDate = new Date(dob);
+            const today = new Date();
+            const minDate = new Date(
+              today.getFullYear() - 10,
+              today.getMonth(),
+              today.getDate(),
+            );
+            if (dobDate > minDate) {
+              showFieldError("dob", "You must be at least 10 years old");
+              valid = false;
+            }
+          }
+
+          if (!valid) return;
+
+          btn.disabled = true;
+          btn.textContent = "Saving...";
+
+          try {
+            const resp = await fetch(
+              `${API_BASE}/users/${auth.id}/complete-profile`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  firstName,
+                  lastName,
+                  phone,
+                  dob: dob || null,
+                  address,
+                  city,
+                  state,
+                  country,
+                }),
+              },
+            );
+
+            if (!resp.ok) {
+              const msg = await resp
+                .text()
+                .catch(() => "Failed to save profile");
+              showToast(msg, "error");
+              btn.disabled = false;
+              btn.textContent = "Complete Registration";
+              return;
+            }
+
+            const updatedUser = await resp.json();
+            updateAuth(updatedUser);
+            showToast("Profile completed! Redirecting...", "success");
+
+            setTimeout(() => {
+              window.location.href = "/DBMS-mini-main/dashboard.html";
+            }, 800);
+          } catch (err) {
+            console.error("Profile save error:", err);
+            showToast("Network error. Please try again.", "error");
+            btn.disabled = false;
+            btn.textContent = "Complete Registration";
+          }
+        });
+    </script>
+  </body>
+</html>

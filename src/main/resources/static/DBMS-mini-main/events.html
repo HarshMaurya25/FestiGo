@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Events - FestiGo</title>
+    <link rel="stylesheet" href="css/navbar.css" />
+    <link rel="stylesheet" href="css/home.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <style>
+      .search-filters {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+      }
+      .search-row {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: flex-end;
+      }
+      .search-group {
+        flex: 1;
+        min-width: 200px;
+      }
+      .search-group label {
+        display: block;
+        color: #fff;
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+      }
+      .search-group input,
+      .search-group select {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.9);
+        font-size: 1rem;
+      }
+      .btn-search {
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: transform 0.2s;
+      }
+      .btn-search:hover {
+        transform: translateY(-2px);
+      }
+      .btn-clear {
+        padding: 12px 20px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+      .no-events {
+        text-align: center;
+        color: #fff;
+        padding: 60px 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+      }
+      .loading {
+        text-align: center;
+        color: #fff;
+        padding: 40px;
+      }
+      .nav-create-event {
+        display: none;
+      }
+      .event-seats {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin: 8px 0;
+      }
+      .seats-available {
+        background: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+      }
+      .seats-limited {
+        background: rgba(255, 193, 7, 0.2);
+        color: #ffc107;
+      }
+      .seats-full {
+        background: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+      }
+    </style>
+  </head>
+  <body id="vanta-bg">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="logo">FestiGo</div>
+        <ul class="nav-menu">
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="events.html" class="active">Events</a></li>
+          <li id="navCreateEvent" style="display: none">
+            <a href="create-event.html">Create Event</a>
+          </li>
+          <li><a href="bookings.html">My Bookings</a></li>
+          <li><a href="profile.html">Profile</a></li>
+          <li><a href="#" id="logoutLink">Logout</a></li>
+        </ul>
+        <div class="hamburger" id="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section class="page-header">
+        <h1>Browse All Events</h1>
+        <p>
+          Find and book tickets for concerts, sports, comedy shows, and more
+        </p>
+      </section>
+
+      <!-- Search and Filter Section -->
+      <section class="search-filters">
+        <div class="search-row">
+          <div class="search-group" style="flex: 2">
+            <label for="searchQuery">Search</label>
+            <input
+              type="text"
+              id="searchQuery"
+              placeholder="Search by event name..."
+            />
+          </div>
+          <div class="search-group">
+            <label for="filterCity">City</label>
+            <input type="text" id="filterCity" placeholder="e.g., Mumbai" />
+          </div>
+          <div class="search-group">
+            <label for="filterGenre">Genre</label>
+            <select id="filterGenre">
+              <option value="">All Genres</option>
+              <option value="Music">Music & Concert</option>
+              <option value="Sports">Sports</option>
+              <option value="Comedy">Comedy</option>
+              <option value="Tech">Tech & Conference</option>
+              <option value="Food">Food & Festival</option>
+              <option value="Art">Art & Exhibition</option>
+              <option value="Cultural">Cultural</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="search-group">
+            <label for="filterType">Type</label>
+            <select id="filterType">
+              <option value="">All Types</option>
+              <option value="Indoor">Indoor</option>
+              <option value="Outdoor">Outdoor</option>
+              <option value="Virtual">Virtual</option>
+              <option value="Hybrid">Hybrid</option>
+            </select>
+          </div>
+          <button class="btn-search" id="btnSearch">Search</button>
+          <button class="btn-clear" id="btnClear">Clear</button>
+        </div>
+      </section>
+
+      <section class="featured-events">
+        <div class="event-grid" id="eventGrid">
+          <div class="loading" id="loadingMsg">Loading events...</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-content">
+        <span>© 2026 FestiGo</span>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+        <a href="#">Support</a>
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+      </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.fog.min.js"></script>
+    <script>
+      VANTA.FOG({
+        el: "#vanta-bg",
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200,
+        minWidth: 200,
+        highlightColor: 0x12ff,
+        midtoneColor: 0xe03922,
+        baseColor: 0xbe7df2,
+      });
+    </script>
+    <script src="js/main.js"></script>
+    <script src="js/nav.js"></script>
+    <script>
+      // Auth check
+      function getAuth() {
+        const authStr = localStorage.getItem("auth");
+        return authStr ? JSON.parse(authStr) : null;
+      }
+
+      const auth = getAuth();
+
+      // Redirect if not logged in
+      if (!auth || !auth.id) {
+        window.location.href = "/DBMS-mini-main/login.html";
+      }
+
+      // Show Create Event for ORGANIZER/ADMIN
+      if (auth && (auth.role === "ORGANIZER" || auth.role === "ADMIN")) {
+        document.getElementById("navCreateEvent").style.display = "block";
+      }
+
+      // Logout handler
+      document
+        .getElementById("logoutLink")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          localStorage.removeItem("auth");
+          document.cookie =
+            "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          window.location.href = "/DBMS-mini-main/login.html";
+        });
+
+      // Store all events for filtering
+      let allEvents = [];
+
+      // Load events from API
+      async function loadEvents() {
+        const eventGrid = document.getElementById("eventGrid");
+        const loadingMsg = document.getElementById("loadingMsg");
+
+        try {
+          const response = await fetch("/api/fests");
+          if (!response.ok) throw new Error("Failed to load events");
+
+          const events = await response.json();
+          // Filter to show only upcoming events
+          allEvents = events.filter(isUpcoming);
+
+          // Check for search query in URL
+          const urlParams = new URLSearchParams(window.location.search);
+          const searchQuery = urlParams.get("search");
+          if (searchQuery) {
+            document.getElementById("searchQuery").value = searchQuery;
+            filterEvents();
+          } else {
+            displayEvents(allEvents);
+          }
+        } catch (error) {
+          console.error("Error loading events:", error);
+          eventGrid.innerHTML =
+            '<div class="no-events"><h3>Unable to load events</h3><p>Please try again later.</p></div>';
+        }
+      }
+
+      // Display events
+      function displayEvents(events) {
+        const eventGrid = document.getElementById("eventGrid");
+
+        if (events.length === 0) {
+          eventGrid.innerHTML =
+            '<div class="no-events"><h3>No events found</h3><p>Try adjusting your search filters or check back later.</p></div>';
+          return;
+        }
+
+        const defaultImage =
+          "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=300&fit=crop";
+
+        eventGrid.innerHTML = events
+          .map((event) => {
+            // Seats info
+            let seatsHtml = "";
+            if (event.maxCapacity) {
+              const seatsLeft = event.maxCapacity - (event.attendeesCount || 0);
+              if (seatsLeft <= 0) {
+                seatsHtml =
+                  '<span class="event-seats seats-full">Sold Out</span>';
+              } else if (seatsLeft <= 10) {
+                seatsHtml = `<span class="event-seats seats-limited">Only ${seatsLeft} left!</span>`;
+              } else {
+                seatsHtml = `<span class="event-seats seats-available">${seatsLeft} seats available</span>`;
+              }
+            }
+
+            return `
+              <div class="event-card">
+                <img src="${event.imageUrl || defaultImage}" alt="${event.name}" onerror="this.src='${defaultImage}'">
+                <div class="event-info">
+                  <h3>${event.name}</h3>
+                  <p class="event-date">📅 ${formatDate(event.date)}${event.time ? " at " + formatTime(event.time) : ""}</p>
+                  <p class="event-location">📍 ${event.place ? event.place + ", " : ""}${event.city || ""}${event.state ? ", " + event.state : ""}</p>
+                  ${event.genre ? `<p class="event-category">🎭 ${event.genre}</p>` : ""}
+                  ${seatsHtml}
+                  <button class="btn-book" onclick="viewEvent('${event.id}')">View Details</button>
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+      }
+
+      // Format date
+      function formatDate(dateStr) {
+        if (!dateStr) return "TBD";
+        const date = new Date(dateStr);
+        return date.toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        });
+      }
+
+      // Format time
+      function formatTime(timeStr) {
+        if (!timeStr) return "";
+        const [hours, minutes] = timeStr.split(":");
+        const h = parseInt(hours);
+        const ampm = h >= 12 ? "PM" : "AM";
+        const hour12 = h % 12 || 12;
+        return `${hour12}:${minutes} ${ampm}`;
+      }
+
+      // View event details
+      function viewEvent(id) {
+        window.location.href = `/DBMS-mini-main/fest-detail.html?id=${id}`;
+      }
+
+      // Check if event is upcoming (not in the past)
+      function isUpcoming(event) {
+        if (!event.date) return true; // Show if no date
+        const eventDate = new Date(event.date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return eventDate >= today;
+      }
+
+      // Filter events
+      function filterEvents() {
+        const query = document
+          .getElementById("searchQuery")
+          .value.toLowerCase()
+          .trim();
+        const city = document
+          .getElementById("filterCity")
+          .value.toLowerCase()
+          .trim();
+        const genre = document.getElementById("filterGenre").value;
+        const type = document.getElementById("filterType").value;
+
+        const filtered = allEvents.filter((event) => {
+          // Search query matches name or description
+          const matchesQuery =
+            !query ||
+            (event.name && event.name.toLowerCase().includes(query)) ||
+            (event.description &&
+              event.description.toLowerCase().includes(query));
+
+          // City filter
+          const matchesCity =
+            !city || (event.city && event.city.toLowerCase().includes(city));
+
+          // Genre filter
+          const matchesGenre = !genre || event.genre === genre;
+
+          // Type filter
+          const matchesType = !type || event.type === type;
+
+          return matchesQuery && matchesCity && matchesGenre && matchesType;
+        });
+
+        displayEvents(filtered);
+      }
+
+      // Clear filters
+      function clearFilters() {
+        document.getElementById("searchQuery").value = "";
+        document.getElementById("filterCity").value = "";
+        document.getElementById("filterGenre").value = "";
+        document.getElementById("filterType").value = "";
+        displayEvents(allEvents);
+      }
+
+      // Event listeners
+      document
+        .getElementById("btnSearch")
+        .addEventListener("click", filterEvents);
+      document
+        .getElementById("btnClear")
+        .addEventListener("click", clearFilters);
+
+      // Search on Enter key
+      document
+        .getElementById("searchQuery")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") filterEvents();
+        });
+      document
+        .getElementById("filterCity")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") filterEvents();
+        });
+
+      // Load events on page load
+      loadEvents();
+    </script>
+  </body>
+</html>

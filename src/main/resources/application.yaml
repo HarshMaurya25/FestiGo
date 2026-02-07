@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: FestiGo
+
+  datasource:
+    url: jdbc:postgresql://localhost:4545/festigo_db?serverTimezone=UTC
+    username: festigo
+    password: festigo_password
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+    show-sql: true
+    open-in-view: false
+
+  thymeleaf:
+    check-template-location: false
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+    # $env:JAVA_TOOL_OPTIONS='-Duser.timezone=UTC'; .\mvnw.cmd

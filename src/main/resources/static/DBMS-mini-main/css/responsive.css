@@ -1,0 +1,126 @@
+/* Responsive Styles for FestiGo */
+
+/* Tablet and below */
+@media (max-width: 768px) {
+  .search-row {
+    flex-direction: column;
+    gap: 12px;
+    justify-content: flex-start;
+  }
+
+  .search-group {
+    min-width: 100%;
+  }
+
+  .btn-search,
+  .btn-clear {
+    width: 100%;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .page-header p {
+    font-size: 0.95rem;
+  }
+
+  .create-event-form {
+    padding: 1.25rem;
+    margin: 1rem;
+  }
+
+  .search-box {
+    flex-direction: column;
+    border-radius: 12px;
+    padding: 12px;
+  }
+
+  .search-box button {
+    width: 100%;
+  }
+
+  .welcome-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .site-footer {
+    padding: 1rem;
+  }
+
+  .footer-content {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .event-grid {
+    grid-template-columns: 1fr;
+    padding: 0 10px;
+  }
+
+  .event-card img {
+    height: 160px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .main-content {
+    padding: 0.75rem;
+    margin-top: 4rem;
+    border-radius: 12px;
+  }
+
+  .marquee-item {
+    width: 260px;
+  }
+
+  .marquee-item img {
+    width: 260px;
+    height: 280px;
+  }
+
+  .hero-section {
+    height: 280px;
+    padding: 2rem 1rem;
+  }
+
+  .event-card {
+    border-radius: 12px;
+  }
+
+  .event-info {
+    padding: 15px;
+  }
+
+  .event-info h3 {
+    font-size: 1.1rem;
+  }
+
+  /* Compact horizontal footer for small screens */
+  .site-footer {
+    height: auto; /* let content determine small-screen height */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    padding: 0.5rem 0.5rem;
+  }
+
+  .site-footer .footer-content {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min-content;
+    gap: 0.75rem;
+    padding: 0 0.5rem;
+    overflow-x: auto;
+    justify-content: start;
+  }
+}

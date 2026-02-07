@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register — Complete Profile - EventHub</title>
+    <style>
+      /* (Reused styling from register.html and complete-profile.html for consistency) */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body,
+      html {
+        height: 100%;
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+      .auth-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .auth-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        width: 100%;
+        max-width: 520px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+      }
+      .auth-card h1 {
+        text-align: center;
+        color: #1f2937;
+        margin-bottom: 8px;
+        font-size: 28px;
+      }
+      .auth-card .subtitle {
+        text-align: center;
+        color: #6b7280;
+        margin-bottom: 30px;
+        font-size: 14px;
+      }
+
+      .steps {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 24px;
+        gap: 12px;
+      }
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #9ca3af;
+        font-size: 13px;
+      }
+      .step.active {
+        color: #667eea;
+        font-weight: 600;
+      }
+      .step.completed {
+        color: #059669;
+      }
+      .step .num {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .step.active .num {
+        background: #667eea;
+        color: white;
+      }
+      .step.completed .num {
+        background: #059669;
+        color: white;
+      }
+      .step-line {
+        width: 40px;
+        height: 2px;
+        background: #e5e7eb;
+        align-self: center;
+      }
+      .step-line.done {
+        background: #059669;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        color: #374151;
+        font-weight: 500;
+        font-size: 14px;
+      }
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.2s;
+        background: white;
+      }
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+      .form-group input.error {
+        border-color: #dc2626;
+        background: #fef2f2;
+      }
+      .error-message {
+        color: #dc2626;
+        font-size: 12px;
+        margin-top: 4px;
+      }
+
+      .btn-submit {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+      }
+      .btn-submit:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .auth-footer {
+        text-align: center;
+        margin-top: 16px;
+        color: #6b7280;
+        font-size: 14px;
+      }
+      .auth-footer a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: #1f2937;
+        color: #f9fafb;
+        padding: 12px 20px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .toast.show {
+        opacity: 1;
+      }
+      .toast.error {
+        background: #dc2626;
+      }
+      .toast.success {
+        background: #059669;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-card">
+        <h1 id="pageTitle">Create Account</h1>
+        <p class="subtitle" id="pageSubtitle">Join EventHub today</p>
+
+        <div class="steps" id="stepsBar">
+          <div class="step" id="stepIndicator1">
+            <span class="num">1</span><span>Account</span>
+          </div>
+          <div class="step-line" id="stepLine"></div>
+          <div class="step" id="stepIndicator2">
+            <span class="num">2</span><span>Profile</span>
+          </div>
+        </div>
+
+        <!-- STEP 1: Account -->
+        <form id="registerForm">
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input
+              type="email"
+              id="email"
+              placeholder="you@example.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password *</label>
+            <input
+              type="password"
+              id="password"
+              placeholder="At least 6 characters"
+              required
+              minlength="6"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password *</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Re-enter password"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="role">Account Type *</label>
+            <select id="role" required>
+              <option value="USER">User - Browse and attend events</option>
+              <option value="ORGANIZER">
+                Organizer - Create and manage events
+              </option>
+              <option value="ADMIN">Admin - Full system access</option>
+            </select>
+            <div class="role-info" id="roleInfo">
+              Users can browse, search, and attend events.
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="registerSubmit">
+            Continue to Profile
+          </button>
+        </form>
+
+        <!-- STEP 2: Profile -->
+        <form id="profileForm" style="display: none; margin-top: 6px">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name *</label
+              ><input type="text" id="firstName" placeholder="John" required />
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name *</label
+              ><input type="text" id="lastName" placeholder="Doe" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phone">Phone Number</label
+              ><input type="tel" id="phone" placeholder="+91 98765 43210" />
+            </div>
+            <div class="form-group">
+              <label for="dob">Date of Birth</label
+              ><input type="date" id="dob" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address</label
+            ><input type="text" id="address" placeholder="123 Main Street" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="city">City</label
+              ><input type="text" id="city" placeholder="Mumbai" />
+            </div>
+            <div class="form-group">
+              <label for="state">State</label
+              ><input type="text" id="state" placeholder="Maharashtra" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="country">Country</label
+            ><input type="text" id="country" placeholder="India" />
+          </div>
+
+          <button type="submit" class="btn-submit" id="profileSubmit">
+            Complete Registration
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          Already have an account?
+          <a href="/DBMS-mini-main/login.html">Sign In</a>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <span>© 2026 EventHub</span>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+      <a href="#">Privacy</a>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="/env/config.js"></script>
+    <script>
+      const API_BASE = (window.__ENV && window.__ENV.API_BASE_URL) || "/api";
+
+      function showToast(message, type = "info") {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.className = "toast show " + type;
+        setTimeout(() => (toast.className = "toast"), 3000);
+      }
+
+      function showFieldError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        field.classList.add("error");
+        const existing = field.parentNode.querySelector(".error-message");
+        if (existing) existing.remove();
+        const err = document.createElement("div");
+        err.className = "error-message";
+        err.textContent = message;
+        field.parentNode.appendChild(err);
+      }
+
+      function clearErrors() {
+        document
+          .querySelectorAll(".error")
+          .forEach((el) => el.classList.remove("error"));
+        document
+          .querySelectorAll(".error-message")
+          .forEach((el) => el.remove());
+      }
+
+      function setAuth(user) {
+        const auth = {
+          id: user.id,
+          role: user.role,
+          profileCompleted: user.profileCompleted,
+        };
+        localStorage.setItem("auth", JSON.stringify(auth));
+        localStorage.setItem("user", JSON.stringify(user));
+        document.cookie = `userId=${user.id};path=/;max-age=${60 * 60 * 24 * 30}`;
+        document.cookie = `role=${user.role};path=/;max-age=${60 * 60 * 24 * 30}`;
+      }
+
+      function getAuth() {
+        try {
+          return JSON.parse(localStorage.getItem("auth"));
+        } catch {
+          return null;
+        }
+      }
+
+      function showStep(step) {
+        const regForm = document.getElementById("registerForm");
+        const profForm = document.getElementById("profileForm");
+        const s1 = document.getElementById("stepIndicator1");
+        const s2 = document.getElementById("stepIndicator2");
+        const line = document.getElementById("stepLine");
+
+        if (step === 1) {
+          regForm.style.display = "block";
+          profForm.style.display = "none";
+          s1.classList.add("active");
+          s1.classList.remove("completed");
+          s2.classList.remove("active");
+          s2.classList.remove("completed");
+          line.classList.remove("done");
+          document.getElementById("pageTitle").textContent = "Create Account";
+          document.getElementById("pageSubtitle").textContent =
+            "Join EventHub today";
+        } else {
+          regForm.style.display = "none";
+          profForm.style.display = "block";
+          s1.classList.remove("active");
+          s1.classList.add("completed");
+          s2.classList.add("active");
+          line.classList.add("done");
+          document.getElementById("pageTitle").textContent =
+            "Complete Your Profile";
+          document.getElementById("pageSubtitle").textContent =
+            "Tell us more about yourself";
+
+          // show welcome if available
+          const user = JSON.parse(localStorage.getItem("user") || "{}");
+          if (user.email) {
+            const badge = document.getElementById("welcomeBadge");
+            if (!badge) {
+              const el = document.createElement("div");
+              el.className = "welcome-badge";
+              el.id = "welcomeBadge";
+              el.textContent = `Welcome, ${user.email}!`;
+              document
+                .querySelector(".auth-card")
+                .insertBefore(
+                  el,
+                  document.querySelector(".auth-card").firstChild,
+                );
+            }
+          }
+        }
+      }
+
+      // When the page loads, show appropriate step
+      window.addEventListener("DOMContentLoaded", () => {
+        const hash = window.location.hash || "";
+        const auth = getAuth();
+        if (hash === "#step2") {
+          if (!auth || !auth.id) {
+            // not logged in -> show step1
+            showStep(1);
+            return;
+          }
+          showStep(2);
+        } else {
+          showStep(1);
+        }
+      });
+
+      // Role info change
+      const roleDescriptions = {
+        USER: "Users can browse, search, and attend events.",
+        ORGANIZER: "Organizers can create and manage their own events.",
+        ADMIN: "Admins have full access to manage users and events.",
+      };
+      document.getElementById("role").addEventListener("change", function () {
+        document.getElementById("roleInfo").textContent =
+          roleDescriptions[this.value];
+      });
+
+      // Register form submit -> create user then show step 2 in-place
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          clearErrors();
+          const email = document.getElementById("email").value.trim();
+          const password = document.getElementById("password").value;
+          const confirmPassword =
+            document.getElementById("confirmPassword").value;
+          const role = document.getElementById("role").value;
+          const btn = document.getElementById("registerSubmit");
+
+          let valid = true;
+          if (!email) {
+            showFieldError("email", "Email is required");
+            valid = false;
+          }
+          if (!password || password.length < 6) {
+            showFieldError(
+              "password",
+              "Password must be at least 6 characters",
+            );
+            valid = false;
+          }
+          if (password !== confirmPassword) {
+            showFieldError("confirmPassword", "Passwords do not match");
+            valid = false;
+          }
+          if (!valid) return;
+
+          btn.disabled = true;
+          btn.textContent = "Creating account...";
+          try {
+            const resp = await fetch(`${API_BASE}/users`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, password, role }),
+            });
+            if (!resp.ok) {
+              const msg = await resp.text().catch(() => "Registration failed");
+              showToast(msg, "error");
+              btn.disabled = false;
+              btn.textContent = "Continue to Profile";
+              return;
+            }
+            const user = await resp.json();
+            setAuth(user);
+            showToast("Account created! Complete your profile.", "success");
+            // show step 2 in-place
+            showStep(2);
+          } catch (err) {
+            console.error("Registration error:", err);
+            showToast("Network error. Please try again.", "error");
+            btn.disabled = false;
+            btn.textContent = "Continue to Profile";
+          }
+        });
+
+      // Profile form submit -> complete profile and redirect to dashboard
+      document
+        .getElementById("profileForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          clearErrors();
+          const auth = getAuth();
+          if (!auth || !auth.id) {
+            window.location.href = "/DBMS-mini-main/register-full.html";
+            return;
+          }
+
+          const firstName = document.getElementById("firstName").value.trim();
+          const lastName = document.getElementById("lastName").value.trim();
+          const phone = document.getElementById("phone").value.trim();
+          const dob = document.getElementById("dob").value;
+          const address = document.getElementById("address").value.trim();
+          const city = document.getElementById("city").value.trim();
+          const state = document.getElementById("state").value.trim();
+          const country = document.getElementById("country").value.trim();
+          const btn = document.getElementById("profileSubmit");
+
+          let valid = true;
+          if (!firstName) {
+            showFieldError("firstName", "First name is required");
+            valid = false;
+          }
+          if (!lastName) {
+            showFieldError("lastName", "Last name is required");
+            valid = false;
+          }
+          if (!valid) return;
+
+          btn.disabled = true;
+          btn.textContent = "Saving...";
+          try {
+            const resp = await fetch(
+              `${API_BASE}/users/${auth.id}/complete-profile`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  firstName,
+                  lastName,
+                  phone,
+                  dob: dob || null,
+                  address,
+                  city,
+                  state,
+                  country,
+                }),
+              },
+            );
+            if (!resp.ok) {
+              const msg = await resp
+                .text()
+                .catch(() => "Failed to save profile");
+              showToast(msg, "error");
+              btn.disabled = false;
+              btn.textContent = "Complete Registration";
+              return;
+            }
+            const updatedUser = await resp.json();
+            // update local storage auth
+            const authData = {
+              id: updatedUser.id,
+              role: updatedUser.role,
+              profileCompleted: updatedUser.profileCompleted,
+            };
+            localStorage.setItem("auth", JSON.stringify(authData));
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+            showToast("Profile completed! Redirecting...", "success");
+            setTimeout(() => {
+              window.location.href = "/DBMS-mini-main/dashboard.html";
+            }, 800);
+          } catch (err) {
+            console.error("Profile save error:", err);
+            showToast("Network error. Please try again.", "error");
+            btn.disabled = false;
+            btn.textContent = "Complete Registration";
+          }
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - FestiGo</title>
+    <link rel="stylesheet" href="css/navbar.css" />
+    <link rel="stylesheet" href="css/home.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <style>
+      .welcome-header {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: white;
+      }
+      .welcome-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+      }
+      .welcome-header p {
+        opacity: 0.9;
+        font-size: 1.1rem;
+      }
+      .user-badge {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        margin-top: 10px;
+      }
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+        max-width: 1400px;
+        margin: 2rem auto 1rem;
+      }
+      .section-header h2 {
+        color: white;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .section-header a {
+        color: #a5b4fc;
+        text-decoration: none;
+        font-size: 14px;
+      }
+      .section-header a:hover {
+        text-decoration: underline;
+      }
+      .event-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 24px;
+        padding: 0 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      .event-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        transition:
+          transform 0.3s,
+          box-shadow 0.3s;
+        cursor: pointer;
+      }
+      .event-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      }
+      .event-card img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+      }
+      .event-info {
+        padding: 20px;
+      }
+      .event-info h3 {
+        color: #1f2937;
+        margin-bottom: 12px;
+        font-size: 1.25rem;
+      }
+      .event-meta {
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+      .event-meta span {
+        margin-right: 16px;
+      }
+      .event-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 12px;
+      }
+      .seats-badge {
+        font-size: 13px;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-weight: 600;
+      }
+      .seats-available {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .seats-limited {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .seats-full {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+      .btn-view {
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 14px;
+        transition: opacity 0.2s;
+      }
+      .btn-view:hover {
+        opacity: 0.9;
+      }
+      .no-events {
+        text-align: center;
+        padding: 40px 20px;
+        color: white;
+        opacity: 0.8;
+      }
+      .create-event-banner {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        margin: 20px auto 2rem;
+        max-width: 600px;
+      }
+      .create-event-banner a {
+        color: white;
+        text-decoration: underline;
+        font-weight: 600;
+      }
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: #1f2937;
+        color: #f9fafb;
+        padding: 12px 20px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .toast.show {
+        opacity: 1;
+      }
+      .toast.error {
+        background: #dc2626;
+      }
+      .toast.success {
+        background: #059669;
+      }
+      .loading-section {
+        text-align: center;
+        padding: 2rem;
+        color: white;
+        opacity: 0.7;
+      }
+    </style>
+  </head>
+  <body id="vanta-bg">
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="logo">FestiGo</div>
+        <ul class="nav-menu">
+          <li><a href="dashboard.html" class="active">Dashboard</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li id="navCreateEvent" style="display: none">
+            <a href="create-event.html">Create Event</a>
+          </li>
+          <li><a href="bookings.html">My Bookings</a></li>
+          <li><a href="profile.html">Profile</a></li>
+          <li><a href="#" id="logoutLink">Logout</a></li>
+        </ul>
+        <div class="hamburger" id="hamburger">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <section class="welcome-header">
+        <h1 id="welcomeTitle">Welcome to FestiGo</h1>
+        <p>Discover and attend amazing events near you</p>
+        <div class="user-badge" id="userBadge">Guest</div>
+      </section>
+
+      <div
+        id="createEventBanner"
+        class="create-event-banner"
+        style="display: none"
+      >
+        🎉 You can create and manage events!
+        <a href="create-event.html">Create Event</a>
+      </div>
+
+      <!-- Popular Events Section -->
+      <div class="section-header">
+        <h2>🔥 Popular Upcoming Events</h2>
+        <a href="events.html">View All →</a>
+      </div>
+      <section class="featured-events">
+        <div class="event-grid" id="popularGrid">
+          <div class="loading-section">Loading popular events...</div>
+        </div>
+      </section>
+
+      <!-- Personalized Recommendations Section -->
+      <div class="section-header" id="recommendedHeader">
+        <h2>✨ Recommended For You</h2>
+        <a href="events.html">Explore More →</a>
+      </div>
+      <section class="featured-events" id="recommendedSection">
+        <div class="event-grid" id="recommendedGrid">
+          <div class="loading-section">Finding events you'll love...</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-content">
+        <span>© 2026 FestiGo</span>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+        <a href="#">Support</a>
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+      </div>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.fog.min.js"></script>
+    <script>
+      VANTA.FOG({
+        el: "#vanta-bg",
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200,
+        minWidth: 200,
+        highlightColor: 0x12ff,
+        midtoneColor: 0xe03922,
+        baseColor: 0xbe7df2,
+      });
+    </script>
+    <script src="/env/config.js"></script>
+    <script>
+      const API_BASE = (window.__ENV && window.__ENV.API_BASE_URL) || "";
+
+      function getAuth() {
+        try {
+          return JSON.parse(localStorage.getItem("auth"));
+        } catch {
+          return null;
+        }
+      }
+
+      function getUser() {
+        try {
+          return JSON.parse(localStorage.getItem("user"));
+        } catch {
+          return null;
+        }
+      }
+
+      const auth = getAuth();
+      const user = getUser();
+
+      // Redirect if not logged in
+      if (!auth || !auth.id) {
+        window.location.href = "/DBMS-mini-main/login.html";
+      }
+
+      // Redirect to complete profile if not completed
+      if (auth && !auth.profileCompleted) {
+        window.location.href = "/DBMS-mini-main/complete-profile.html";
+      }
+
+      function setupUI() {
+        const welcomeTitle = document.getElementById("welcomeTitle");
+        const userBadge = document.getElementById("userBadge");
+        const navCreateEvent = document.getElementById("navCreateEvent");
+        const createEventBanner = document.getElementById("createEventBanner");
+
+        if (user && user.firstName) {
+          welcomeTitle.textContent = `Welcome, ${user.firstName}!`;
+        }
+
+        if (auth) {
+          userBadge.textContent = auth.role;
+          if (auth.role === "ORGANIZER" || auth.role === "ADMIN") {
+            navCreateEvent.style.display = "block";
+            createEventBanner.style.display = "block";
+          }
+        }
+      }
+
+      function showToast(message, type = "info") {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.className = "toast show " + type;
+        setTimeout(() => (toast.className = "toast"), 3000);
+      }
+
+      function formatDate(dateStr) {
+        if (!dateStr) return "Date TBA";
+        const date = new Date(dateStr);
+        return date.toLocaleDateString("en-IN", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+      }
+
+      function getSeatsInfo(event) {
+        if (!event.maxCapacity) return null;
+        const seatsLeft = event.maxCapacity - (event.attendeesCount || 0);
+        if (seatsLeft <= 0) return { text: "Sold Out", class: "seats-full" };
+        if (seatsLeft <= 10)
+          return { text: `Only ${seatsLeft} left!`, class: "seats-limited" };
+        return { text: `${seatsLeft} seats`, class: "seats-available" };
+      }
+
+      function renderEventCard(event) {
+        const defaultImage =
+          "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=300&fit=crop";
+        const seatsInfo = getSeatsInfo(event);
+
+        return `
+          <div class="event-card" onclick="viewEvent('${event.id}')">
+            <img src="${event.imageUrl || defaultImage}" alt="${event.name}" onerror="this.src='${defaultImage}'">
+            <div class="event-info">
+              <h3>${event.name}</h3>
+              <p class="event-meta">
+                <span>📅 ${formatDate(event.date)}</span>
+                <span>⏰ ${event.time || "TBA"}</span>
+              </p>
+              <p class="event-meta">
+                <span>📍 ${event.city || event.place || "Location TBA"}${event.state ? ", " + event.state : ""}</span>
+              </p>
+              <p class="event-meta">
+                <span>🎭 ${event.genre || event.type || "General"}</span>
+              </p>
+              <div class="event-footer">
+                ${seatsInfo ? `<span class="seats-badge ${seatsInfo.class}">${seatsInfo.text}</span>` : "<span></span>"}
+                <button class="btn-view">View Details</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function viewEvent(id) {
+        window.location.href = `/DBMS-mini-main/fest-detail.html?id=${id}`;
+      }
+
+      async function loadPopularEvents() {
+        const grid = document.getElementById("popularGrid");
+        try {
+          const resp = await fetch(`${API_BASE}/api/fests/popular?limit=6`);
+          if (!resp.ok) throw new Error("Failed to load");
+          const events = await resp.json();
+
+          if (events.length === 0) {
+            grid.innerHTML =
+              '<div class="no-events"><p>No upcoming events. Check back later!</p></div>';
+            return;
+          }
+
+          grid.innerHTML = events.map(renderEventCard).join("");
+        } catch (err) {
+          console.error("Load popular error:", err);
+          // Fallback to regular fests
+          try {
+            const resp = await fetch(`${API_BASE}/api/fests/upcoming`);
+            if (!resp.ok) throw new Error("Failed");
+            const events = await resp.json();
+            grid.innerHTML =
+              events.slice(0, 6).map(renderEventCard).join("") ||
+              '<div class="no-events"><p>No upcoming events.</p></div>';
+          } catch (e) {
+            grid.innerHTML =
+              '<div class="no-events"><p>Unable to load events.</p></div>';
+          }
+        }
+      }
+
+      async function loadRecommendedEvents() {
+        const grid = document.getElementById("recommendedGrid");
+        const header = document.getElementById("recommendedHeader");
+        const section = document.getElementById("recommendedSection");
+
+        if (!auth || !auth.id) {
+          header.style.display = "none";
+          section.style.display = "none";
+          return;
+        }
+
+        try {
+          const resp = await fetch(
+            `${API_BASE}/api/fests/recommendations/${auth.id}?limit=6`,
+          );
+          if (!resp.ok) throw new Error("Failed to load");
+          const events = await resp.json();
+
+          if (events.length === 0) {
+            grid.innerHTML =
+              '<div class="no-events"><p>Attend some events to get personalized recommendations!</p></div>';
+            return;
+          }
+
+          grid.innerHTML = events.map(renderEventCard).join("");
+        } catch (err) {
+          console.error("Load recommendations error:", err);
+          grid.innerHTML =
+            '<div class="no-events"><p>Attend events to unlock personalized recommendations!</p></div>';
+        }
+      }
+
+      // Initialize
+      setupUI();
+      loadPopularEvents();
+      loadRecommendedEvents();
+    </script>
+    <script src="js/main.js"></script>
+    <script src="js/nav.js"></script>
+  </body>
+</html>

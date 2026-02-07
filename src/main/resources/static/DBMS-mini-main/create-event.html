@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Event - FestiGo</title>
+    <link rel="stylesheet" href="css/navbar.css" />
+    <link rel="stylesheet" href="css/home.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body id="vanta-bg">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="logo">FestiGo</div>
+        <ul class="nav-menu">
+          <li><a href="/DBMS-mini-main/dashboard.html">Dashboard</a></li>
+          <li><a href="/DBMS-mini-main/events.html">Events</a></li>
+          <li>
+            <a href="/DBMS-mini-main/create-event.html" class="active"
+              >Create Event</a
+            >
+          </li>
+          <li><a href="/DBMS-mini-main/bookings.html">My Bookings</a></li>
+          <li><a href="/DBMS-mini-main/profile.html">Profile</a></li>
+          <li><a href="#" id="logoutLink">Logout</a></li>
+        </ul>
+        <div class="hamburger" id="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <section class="page-header">
+        <h1>Create New Event</h1>
+        <p>Share your event with the FestiGo community</p>
+      </section>
+
+      <div class="create-event-form">
+        <div class="success-message" id="successMsg">
+          ✓ Event created successfully! Redirecting to events...
+        </div>
+        <div
+          class="error-message"
+          id="errorMsg"
+          style="
+            display: none;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+          "
+        ></div>
+
+        <form id="createEventForm">
+          <div class="form-group">
+            <label for="eventName">Event Name *</label>
+            <input
+              type="text"
+              id="eventName"
+              name="eventName"
+              placeholder="e.g., Tech Summit 2026"
+              required
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="eventDate">Date *</label>
+              <input type="date" id="eventDate" name="eventDate" required />
+            </div>
+            <div class="form-group">
+              <label for="eventTime">Time</label>
+              <input type="time" id="eventTime" name="eventTime" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="eventPlace">Venue / Place *</label>
+            <input
+              type="text"
+              id="eventPlace"
+              name="eventPlace"
+              placeholder="e.g., Convention Center, Main Hall"
+              required
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="eventCity">City *</label>
+              <input
+                type="text"
+                id="eventCity"
+                name="eventCity"
+                placeholder="e.g., Mumbai"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="eventState">State *</label>
+              <input
+                type="text"
+                id="eventState"
+                name="eventState"
+                placeholder="e.g., Maharashtra"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="eventGenre">Genre *</label>
+              <select id="eventGenre" name="eventGenre" required>
+                <option value="">Select a genre</option>
+                <option value="Music">Music & Concert</option>
+                <option value="Sports">Sports</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Tech">Tech & Conference</option>
+                <option value="Food">Food & Festival</option>
+                <option value="Art">Art & Exhibition</option>
+                <option value="Cultural">Cultural</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="eventType">Type *</label>
+              <select id="eventType" name="eventType" required>
+                <option value="">Select type</option>
+                <option value="Indoor">Indoor</option>
+                <option value="Outdoor">Outdoor</option>
+                <option value="Virtual">Virtual</option>
+                <option value="Hybrid">Hybrid</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="maxCapacity">Max Capacity (Number of Tickets)</label>
+            <input
+              type="number"
+              id="maxCapacity"
+              name="maxCapacity"
+              placeholder="e.g., 500 (leave empty for unlimited)"
+              min="1"
+            />
+            <small style="color: #999; display: block; margin-top: 5px"
+              >Leave empty for unlimited capacity</small
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="eventDescription">Description *</label>
+            <textarea
+              id="eventDescription"
+              name="eventDescription"
+              placeholder="Tell us about your event..."
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="eventImageFile">Event Image</label>
+            <input
+              type="file"
+              id="eventImageFile"
+              name="eventImageFile"
+              accept="image/*"
+              style="padding: 10px"
+            />
+            <small style="color: #999; display: block; margin-top: 5px"
+              >Upload an image (max 10MB). Supported: JPG, PNG, GIF, WebP</small
+            >
+            <div id="imagePreview" style="margin-top: 10px; display: none">
+              <img
+                id="previewImg"
+                style="
+                  max-width: 200px;
+                  max-height: 150px;
+                  border-radius: 8px;
+                  border: 2px solid #ddd;
+                "
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="eventImage">Or paste Image URL</label>
+            <input
+              type="url"
+              id="eventImage"
+              name="eventImage"
+              placeholder="e.g., https://images.unsplash.com/..."
+            />
+          </div>
+
+          <button type="submit" class="btn-submit" id="submitBtn">
+            Create Event
+          </button>
+        </form>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-content">
+        <span>© 2026 FestiGo</span>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+        <a href="#">Support</a>
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+      </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/nav.js"></script>
+    <script>
+      // Check authentication and role
+      function getAuth() {
+        const authStr = localStorage.getItem("auth");
+        return authStr ? JSON.parse(authStr) : null;
+      }
+
+      const auth = getAuth();
+
+      // Redirect if not logged in
+      if (!auth || !auth.id) {
+        window.location.href = "/DBMS-mini-main/login.html";
+      }
+
+      // Redirect if USER role (not authorized to create events)
+      if (auth && auth.role === "USER") {
+        alert(
+          "You do not have permission to create events. Only Organizers and Admins can create events.",
+        );
+        window.location.href = "/DBMS-mini-main/dashboard.html";
+      }
+
+      // Logout handler
+      document
+        .getElementById("logoutLink")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          localStorage.removeItem("auth");
+          document.cookie =
+            "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          window.location.href = "/DBMS-mini-main/login.html";
+        });
+
+      // Image preview handler
+      document
+        .getElementById("eventImageFile")
+        .addEventListener("change", function (e) {
+          const file = e.target.files[0];
+          const previewDiv = document.getElementById("imagePreview");
+          const previewImg = document.getElementById("previewImg");
+
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              previewImg.src = e.target.result;
+              previewDiv.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+          } else {
+            previewDiv.style.display = "none";
+          }
+        });
+
+      // Handle form submission
+      document
+        .getElementById("createEventForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const successMsg = document.getElementById("successMsg");
+          const errorMsg = document.getElementById("errorMsg");
+          const submitBtn = document.getElementById("submitBtn");
+
+          // Hide messages
+          successMsg.style.display = "none";
+          errorMsg.style.display = "none";
+
+          // Fest date validation: must be at least 1 day in the future
+          const eventDate = document.getElementById("eventDate").value;
+          if (eventDate) {
+            const selectedDate = new Date(eventDate);
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(0, 0, 0, 0);
+            if (selectedDate < tomorrow) {
+              errorMsg.textContent =
+                "Event date must be at least 1 day in the future";
+              errorMsg.style.display = "block";
+              return;
+            }
+          }
+
+          // Disable button
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Creating...";
+
+          let imageUrl = document.getElementById("eventImage").value || null;
+          const imageFile = document.getElementById("eventImageFile").files[0];
+
+          try {
+            // If a file is selected, upload to Cloudinary first
+            if (imageFile) {
+              submitBtn.textContent = "Uploading image...";
+              const formData = new FormData();
+              formData.append("file", imageFile);
+
+              const uploadResp = await fetch("/api/images/upload", {
+                method: "POST",
+                body: formData,
+              });
+
+              if (!uploadResp.ok) {
+                const uploadErr = await uploadResp.json().catch(() => ({}));
+                throw new Error(uploadErr.error || "Failed to upload image");
+              }
+
+              const uploadResult = await uploadResp.json();
+              imageUrl = uploadResult.url;
+              submitBtn.textContent = "Creating event...";
+            }
+
+            const eventData = {
+              name: document.getElementById("eventName").value,
+              date: document.getElementById("eventDate").value,
+              time: document.getElementById("eventTime").value || null,
+              place: document.getElementById("eventPlace").value,
+              city: document.getElementById("eventCity").value,
+              state: document.getElementById("eventState").value,
+              genre: document.getElementById("eventGenre").value,
+              type: document.getElementById("eventType").value,
+              description: document.getElementById("eventDescription").value,
+              imageUrl: imageUrl,
+              maxCapacity: document.getElementById("maxCapacity").value
+                ? parseInt(document.getElementById("maxCapacity").value)
+                : null,
+            };
+
+            // Include createdById only when it's a valid UUID (prevents server errors)
+            if (auth && auth.id && /^[0-9a-fA-F\-]{36}$/.test(auth.id)) {
+              eventData.createdById = auth.id;
+            }
+
+            const response = await fetch("/api/fests", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(eventData),
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}));
+              throw new Error(errorData.message || "Failed to create event");
+            }
+
+            const result = await response.json();
+
+            // Show success message
+            successMsg.style.display = "block";
+
+            // Reset form
+            document.getElementById("createEventForm").reset();
+            document.getElementById("imagePreview").style.display = "none";
+
+            // Redirect to events page after 2 seconds
+            setTimeout(() => {
+              window.location.href = "/DBMS-mini-main/events.html";
+            }, 2000);
+          } catch (error) {
+            errorMsg.textContent =
+              error.message || "An error occurred. Please try again.";
+            errorMsg.style.display = "block";
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Create Event";
+          }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.fog.min.js"></script>
+    <script>
+      VANTA.FOG({
+        el: "#vanta-bg",
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200,
+        minWidth: 200,
+        highlightColor: 0x12ff,
+        midtoneColor: 0xe03922,
+        baseColor: 0xbe7df2,
+      });
+    </script>
+  </body>
+</html>
