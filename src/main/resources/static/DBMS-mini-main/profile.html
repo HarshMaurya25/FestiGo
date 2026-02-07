@@ -13,11 +13,16 @@
         padding: 0 1rem;
       }
       .profile-card {
-        background: #ffffff; /* clean white */
+        background: linear-gradient(
+          180deg,
+          rgba(15, 18, 28, 0.95) 0%,
+          rgba(22, 26, 38, 0.92) 100%
+        );
         border-radius: 16px;
         padding: 2.5rem;
-        box-shadow: 0 12px 28px rgba(16, 24, 40, 0.06);
-        border: 1px solid rgba(15, 23, 42, 0.04);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        color: #e6eef8;
       }
       .profile-header {
         display: flex;
@@ -26,7 +31,7 @@
         text-align: center;
         margin-bottom: 2rem;
         padding-bottom: 2rem;
-        border-bottom: 1px solid #e5e7eb;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
       .profile-avatar {
         width: 110px;
@@ -36,7 +41,7 @@
         border: 4px solid #667eea;
         position: relative;
         margin-bottom: 1rem;
-        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.22);
       }
       .profile-avatar img {
         width: 100%;
@@ -65,7 +70,7 @@
       .profile-name {
         font-size: 1.5rem;
         font-weight: 700;
-        color: #1f2937;
+        color: #f3f4f6;
         margin-bottom: 4px;
       }
       .profile-email {
@@ -131,19 +136,22 @@
       }
       .info-input {
         padding: 10px 12px;
-        border: 2px solid #e5e7eb;
+        border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: 8px;
         font-size: 14px;
         transition: border-color 0.2s;
         width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        color: #e6eef8;
       }
       .info-input:focus {
         outline: none;
         border-color: #667eea;
       }
       .info-input:disabled {
-        background: #f9fafb;
+        background: rgba(30, 35, 50, 0.7);
         cursor: not-allowed;
+        color: #9ca3af;
       }
       .btn-row {
         display: flex;

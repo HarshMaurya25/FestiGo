@@ -26,4 +26,10 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
+cloudinary:
+  cloud-name: dzdcga455
+  api-key: "188111427755811"
+  api-secret:
+    wspnr0RJOax4NHQGn6dN8ykpUqc
+
     # $env:JAVA_TOOL_OPTIONS='-Duser.timezone=UTC'; .\mvnw.cmd

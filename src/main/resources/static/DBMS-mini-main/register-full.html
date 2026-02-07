@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Register — Complete Profile - EventHub</title>
+    <title>Register — Complete Profile - FestiGo</title>
     <style>
-      /* (Reused styling from register.html and complete-profile.html for consistency) */
+      /* Dark theme styling */
       * {
         margin: 0;
         padding: 0;
@@ -14,7 +14,11 @@
       body,
       html {
         height: 100%;
-        font-family: "Segoe UI", Arial, sans-serif;
+        font-family:
+          "Segoe UI",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
       }
       body {
         display: flex;
@@ -30,23 +34,24 @@
         padding: 20px;
       }
       .auth-card {
-        background: rgba(255, 255, 255, 0.95);
+        background: rgba(15, 18, 28, 0.95);
         backdrop-filter: blur(10px);
         border-radius: 20px;
         padding: 40px;
         width: 100%;
         max-width: 520px;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(102, 126, 234, 0.2);
       }
       .auth-card h1 {
         text-align: center;
-        color: #1f2937;
+        color: #f3f4f6;
         margin-bottom: 8px;
         font-size: 28px;
       }
       .auth-card .subtitle {
         text-align: center;
-        color: #6b7280;
+        color: #9ca3af;
         margin-bottom: 30px;
         font-size: 14px;
       }
@@ -61,7 +66,7 @@
         display: flex;
         align-items: center;
         gap: 6px;
-        color: #9ca3af;
+        color: #6b7280;
         font-size: 13px;
       }
       .step.active {
@@ -69,35 +74,36 @@
         font-weight: 600;
       }
       .step.completed {
-        color: #059669;
+        color: #4ade80;
       }
       .step .num {
         width: 24px;
         height: 24px;
         border-radius: 50%;
-        background: #e5e7eb;
+        background: rgba(55, 65, 81, 0.8);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 12px;
         font-weight: 600;
+        color: #9ca3af;
       }
       .step.active .num {
         background: #667eea;
         color: white;
       }
       .step.completed .num {
-        background: #059669;
-        color: white;
+        background: #4ade80;
+        color: #0f172a;
       }
       .step-line {
         width: 40px;
         height: 2px;
-        background: #e5e7eb;
+        background: rgba(55, 65, 81, 0.8);
         align-self: center;
       }
       .step-line.done {
-        background: #059669;
+        background: #4ade80;
       }
 
       .form-group {
@@ -106,7 +112,7 @@
       .form-group label {
         display: block;
         margin-bottom: 6px;
-        color: #374151;
+        color: #e5e7eb;
         font-weight: 500;
         font-size: 14px;
       }
@@ -114,24 +120,29 @@
       .form-group select {
         width: 100%;
         padding: 12px 16px;
-        border: 2px solid #e5e7eb;
+        border: 2px solid rgba(102, 126, 234, 0.3);
         border-radius: 10px;
         font-size: 15px;
         transition: all 0.2s;
-        background: white;
+        background: rgba(30, 35, 50, 0.8);
+        color: #f3f4f6;
+      }
+      .form-group input::placeholder {
+        color: #6b7280;
       }
       .form-group input:focus,
       .form-group select:focus {
         outline: none;
         border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        background: rgba(35, 40, 55, 0.9);
       }
       .form-group input.error {
-        border-color: #dc2626;
-        background: #fef2f2;
+        border-color: #f87171;
+        background: rgba(248, 113, 113, 0.1);
       }
       .error-message {
-        color: #dc2626;
+        color: #f87171;
         font-size: 12px;
         margin-top: 4px;
       }
@@ -169,7 +180,7 @@
       .auth-footer {
         text-align: center;
         margin-top: 16px;
-        color: #6b7280;
+        color: #9ca3af;
         font-size: 14px;
       }
       .auth-footer a {

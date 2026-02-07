@@ -12,24 +12,33 @@
         max-width: 900px;
         margin: 0 auto;
         padding: 2rem 1rem;
-        background: #fbfbfd; /* subtle off-white */
+        background: linear-gradient(
+          180deg,
+          rgba(15, 18, 28, 0.95) 0%,
+          rgba(22, 26, 38, 0.92) 100%
+        );
         border-radius: 12px;
+        border: 1px solid rgba(102, 126, 234, 0.15);
+        color: #e6eef8;
       }
       .booking-card {
-        background: #ffffff;
+        background: rgba(25, 30, 45, 0.85);
         padding: 1.5rem;
         border-radius: 12px;
-        box-shadow: 0 12px 28px rgba(16, 24, 40, 0.06);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
         margin-bottom: 1rem;
         display: flex;
         gap: 1.5rem;
         transition:
           transform 0.2s,
           box-shadow 0.2s;
+        cursor: pointer;
+        border: 1px solid rgba(102, 126, 234, 0.1);
       }
       .booking-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 12px 32px rgba(102, 126, 234, 0.2);
+        border-color: rgba(102, 126, 234, 0.3);
       }
       .booking-image {
         width: 120px;
@@ -53,14 +62,37 @@
         justify-content: center;
       }
       .booking-title {
-        color: #333;
+        color: #f3f4f6;
         margin: 0 0 8px 0;
         font-size: 1.25rem;
       }
       .booking-info {
-        color: #666;
+        color: #9ca3af;
         margin: 4px 0;
         font-size: 0.95rem;
+      }
+      /* Event timing status badges */
+      .event-timing-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 8px;
+      }
+      .timing-past {
+        background: rgba(107, 114, 128, 0.3);
+        color: #9ca3af;
+      }
+      .timing-this-week {
+        background: rgba(251, 191, 36, 0.2);
+        color: #fbbf24;
+      }
+      .timing-upcoming {
+        background: rgba(74, 222, 128, 0.2);
+        color: #4ade80;
       }
       .booking-status {
         display: flex;
@@ -84,12 +116,12 @@
       .loading-spinner {
         text-align: center;
         padding: 3rem;
-        color: #374151;
+        color: #e6eef8;
       }
       .empty-state {
         text-align: center;
         padding: 4rem 2rem;
-        color: #374151;
+        color: #e6eef8;
       }
       .empty-state h3 {
         margin-bottom: 1rem;
@@ -225,9 +257,36 @@
             return;
           }
 
+          // Helper to determine event timing status
+          function getTimingBadge(festDate) {
+            if (!festDate) return "";
+            const eventDate = new Date(festDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const oneWeekFromNow = new Date(today);
+            oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7);
+
+            if (eventDate < today) {
+              return '<span class="event-timing-badge timing-past">⚫ Past Event</span>';
+            } else if (eventDate <= oneWeekFromNow) {
+              return '<span class="event-timing-badge timing-this-week">🟡 This Week</span>';
+            } else {
+              return '<span class="event-timing-badge timing-upcoming">🟢 Upcoming</span>';
+            }
+          }
+
           bookings.forEach((booking) => {
             const card = document.createElement("div");
             card.className = "booking-card";
+
+            // Add click-to-view event details
+            if (booking.festId) {
+              card.style.cursor = "pointer";
+              card.onclick = () => {
+                window.location.href = `/DBMS-mini-main/fest-detail.html?id=${booking.festId}`;
+              };
+            }
 
             const imageHtml = booking.festImageUrl
               ? `<img src="${booking.festImageUrl}" alt="${booking.festName}" class="booking-image">`
@@ -262,10 +321,12 @@
                 ? "status-confirmed"
                 : "status-pending";
 
+            const timingBadge = getTimingBadge(booking.festDate);
+
             card.innerHTML = `
               ${imageHtml}
               <div class="booking-details">
-                <h3 class="booking-title">${booking.festName}</h3>
+                <h3 class="booking-title">${booking.festName} ${timingBadge}</h3>
                 <p class="booking-info">📅 ${dateStr} ${timeStr ? "| 🕐 " + timeStr : ""}</p>
                 <p class="booking-info">📍 ${locationStr}</p>
                 ${bookedAtStr ? `<p class="booking-info">🎫 Booked on: ${bookedAtStr}</p>` : ""}

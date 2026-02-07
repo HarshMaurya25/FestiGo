@@ -16,6 +16,10 @@
       .welcome-header h1 {
         font-size: 2.5rem;
         margin-bottom: 0.5rem;
+        background: linear-gradient(to right, #26dc5a, #dbc3f2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
       .welcome-header p {
         opacity: 0.9;
@@ -23,11 +27,12 @@
       }
       .user-badge {
         display: inline-block;
-        background: rgba(255, 255, 255, 0.2);
+        background: linear-gradient(135deg, #667eea, #764ba2);
         padding: 6px 16px;
         border-radius: 20px;
         font-size: 13px;
         margin-top: 10px;
+        font-weight: 600;
       }
       .section-header {
         display: flex;
@@ -52,6 +57,89 @@
       .section-header a:hover {
         text-decoration: underline;
       }
+      /* Amazon-style horizontal slider */
+      .recommendation-slider {
+        position: relative;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 50px;
+      }
+      .slider-container {
+        display: flex;
+        gap: 20px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding: 10px 0;
+      }
+      .slider-container::-webkit-scrollbar {
+        display: none;
+      }
+      .slider-card {
+        flex: 0 0 300px;
+        background: rgba(25, 30, 45, 0.9);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        transition:
+          transform 0.3s,
+          box-shadow 0.3s;
+        cursor: pointer;
+        border: 1px solid rgba(102, 126, 234, 0.15);
+      }
+      .slider-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+        border-color: rgba(102, 126, 234, 0.4);
+      }
+      .slider-card img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+      }
+      .slider-card .event-info {
+        padding: 16px;
+      }
+      .slider-card .event-info h3 {
+        color: #f3f4f6;
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .slider-card .event-meta {
+        color: #9ca3af;
+        font-size: 13px;
+      }
+      .slider-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        background: rgba(102, 126, 234, 0.9);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+      }
+      .slider-btn:hover {
+        background: #667eea;
+      }
+      .slider-btn.prev {
+        left: 5px;
+      }
+      .slider-btn.next {
+        right: 5px;
+      }
       .event-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -61,18 +149,20 @@
         margin: 0 auto;
       }
       .event-card {
-        background: rgba(255, 255, 255, 0.95);
+        background: rgba(25, 30, 45, 0.9);
         border-radius: 16px;
         overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         transition:
           transform 0.3s,
           box-shadow 0.3s;
         cursor: pointer;
+        border: 1px solid rgba(102, 126, 234, 0.15);
       }
       .event-card:hover {
         transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+        border-color: rgba(102, 126, 234, 0.4);
       }
       .event-card img {
         width: 100%;
@@ -83,12 +173,12 @@
         padding: 20px;
       }
       .event-info h3 {
-        color: #1f2937;
+        color: #f3f4f6;
         margin-bottom: 12px;
         font-size: 1.25rem;
       }
       .event-meta {
-        color: #6b7280;
+        color: #9ca3af;
         font-size: 14px;
         margin-bottom: 8px;
       }
@@ -230,14 +320,18 @@
         </div>
       </section>
 
-      <!-- Personalized Recommendations Section -->
+      <!-- Personalized Recommendations Section - Amazon-style Slider -->
       <div class="section-header" id="recommendedHeader">
         <h2>✨ Recommended For You</h2>
         <a href="events.html">Explore More →</a>
       </div>
       <section class="featured-events" id="recommendedSection">
-        <div class="event-grid" id="recommendedGrid">
-          <div class="loading-section">Finding events you'll love...</div>
+        <div class="recommendation-slider">
+          <button class="slider-btn prev" id="sliderPrev">❮</button>
+          <div class="slider-container" id="recommendedSlider">
+            <div class="loading-section">Finding events you'll love...</div>
+          </div>
+          <button class="slider-btn next" id="sliderNext">❯</button>
         </div>
       </section>
     </main>
@@ -377,6 +471,28 @@
         `;
       }
 
+      function renderSliderCard(event) {
+        const defaultImage =
+          "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=300&fit=crop";
+        const seatsInfo = getSeatsInfo(event);
+
+        return `
+          <div class="slider-card" onclick="viewEvent('${event.id}')">
+            <img src="${event.imageUrl || defaultImage}" alt="${event.name}" onerror="this.src='${defaultImage}'">
+            <div class="event-info">
+              <h3>${event.name}</h3>
+              <p class="event-meta">
+                <span>📅 ${formatDate(event.date)}</span>
+              </p>
+              <p class="event-meta">
+                <span>📍 ${event.city || event.place || "Location TBA"}</span>
+              </p>
+              ${seatsInfo ? `<span class="seats-badge ${seatsInfo.class}">${seatsInfo.text}</span>` : ""}
+            </div>
+          </div>
+        `;
+      }
+
       function viewEvent(id) {
         window.location.href = `/DBMS-mini-main/fest-detail.html?id=${id}`;
       }
@@ -384,36 +500,31 @@
       async function loadPopularEvents() {
         const grid = document.getElementById("popularGrid");
         try {
-          const resp = await fetch(`${API_BASE}/api/fests/popular?limit=6`);
+          // Try popular endpoint first
+          let resp = await fetch(`/api/fests/popular?limit=6`);
+          if (!resp.ok) {
+            // Fallback to upcoming endpoint
+            resp = await fetch(`/api/fests/upcoming`);
+          }
           if (!resp.ok) throw new Error("Failed to load");
           const events = await resp.json();
 
-          if (events.length === 0) {
+          if (!events || events.length === 0) {
             grid.innerHTML =
               '<div class="no-events"><p>No upcoming events. Check back later!</p></div>';
             return;
           }
 
-          grid.innerHTML = events.map(renderEventCard).join("");
+          grid.innerHTML = events.slice(0, 6).map(renderEventCard).join("");
         } catch (err) {
           console.error("Load popular error:", err);
-          // Fallback to regular fests
-          try {
-            const resp = await fetch(`${API_BASE}/api/fests/upcoming`);
-            if (!resp.ok) throw new Error("Failed");
-            const events = await resp.json();
-            grid.innerHTML =
-              events.slice(0, 6).map(renderEventCard).join("") ||
-              '<div class="no-events"><p>No upcoming events.</p></div>';
-          } catch (e) {
-            grid.innerHTML =
-              '<div class="no-events"><p>Unable to load events.</p></div>';
-          }
+          grid.innerHTML =
+            '<div class="no-events"><p>Unable to load events. Please try refreshing.</p></div>';
         }
       }
 
       async function loadRecommendedEvents() {
-        const grid = document.getElementById("recommendedGrid");
+        const slider = document.getElementById("recommendedSlider");
         const header = document.getElementById("recommendedHeader");
         const section = document.getElementById("recommendedSection");
 
@@ -424,23 +535,50 @@
         }
 
         try {
-          const resp = await fetch(
-            `${API_BASE}/api/fests/recommendations/${auth.id}?limit=6`,
+          let resp = await fetch(
+            `/api/fests/recommendations/${auth.id}?limit=10`,
           );
-          if (!resp.ok) throw new Error("Failed to load");
-          const events = await resp.json();
+          let events = [];
 
-          if (events.length === 0) {
-            grid.innerHTML =
-              '<div class="no-events"><p>Attend some events to get personalized recommendations!</p></div>';
+          if (resp.ok) {
+            events = await resp.json();
+          }
+
+          // If no recommendations, fall back to upcoming events
+          if (!events || events.length === 0) {
+            resp = await fetch(`/api/fests/upcoming`);
+            if (resp.ok) {
+              events = await resp.json();
+            }
+          }
+
+          if (!events || events.length === 0) {
+            slider.innerHTML =
+              '<div class="no-events" style="color: #9ca3af; padding: 2rem;"><p>Attend some events to get personalized recommendations!</p></div>';
             return;
           }
 
-          grid.innerHTML = events.map(renderEventCard).join("");
+          slider.innerHTML = events.slice(0, 10).map(renderSliderCard).join("");
         } catch (err) {
           console.error("Load recommendations error:", err);
-          grid.innerHTML =
-            '<div class="no-events"><p>Attend events to unlock personalized recommendations!</p></div>';
+          slider.innerHTML =
+            '<div class="no-events" style="color: #9ca3af; padding: 2rem;"><p>Explore events to unlock recommendations!</p></div>';
+        }
+      }
+
+      // Slider navigation
+      function setupSlider() {
+        const slider = document.getElementById("recommendedSlider");
+        const prevBtn = document.getElementById("sliderPrev");
+        const nextBtn = document.getElementById("sliderNext");
+
+        if (prevBtn && nextBtn && slider) {
+          prevBtn.addEventListener("click", () => {
+            slider.scrollBy({ left: -320, behavior: "smooth" });
+          });
+          nextBtn.addEventListener("click", () => {
+            slider.scrollBy({ left: 320, behavior: "smooth" });
+          });
         }
       }
 
@@ -448,6 +586,7 @@
       setupUI();
       loadPopularEvents();
       loadRecommendedEvents();
+      setupSlider();
     </script>
     <script src="js/main.js"></script>
     <script src="js/nav.js"></script>

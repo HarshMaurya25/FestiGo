@@ -9,69 +9,94 @@
     <link rel="stylesheet" href="css/responsive.css" />
     <style>
       .search-filters {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        padding: 20px;
-        border-radius: 12px;
-        margin-bottom: 30px;
+        background: rgba(25, 30, 45, 0.8);
+        backdrop-filter: blur(12px);
+        padding: 24px;
+        border-radius: 16px;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(102, 126, 234, 0.15);
       }
       .search-row {
         display: flex;
-        gap: 15px;
+        gap: 16px;
         flex-wrap: wrap;
         align-items: flex-end;
       }
       .search-group {
         flex: 1;
-        min-width: 200px;
+        min-width: 180px;
       }
       .search-group label {
         display: block;
-        color: #fff;
-        margin-bottom: 5px;
-        font-size: 0.9rem;
+        color: #9ca3af;
+        margin-bottom: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
       }
       .search-group input,
       .search-group select {
         width: 100%;
-        padding: 12px;
-        border: none;
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.9);
+        padding: 12px 16px;
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 10px;
+        background: rgba(30, 35, 50, 0.8);
         font-size: 1rem;
+        color: #f3f4f6;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+      }
+      .search-group input::placeholder {
+        color: #6b7280;
+      }
+      .search-group input:focus,
+      .search-group select:focus {
+        outline: none;
+        border-color: #667eea;
+        background: rgba(35, 40, 55, 0.9);
       }
       .btn-search {
-        padding: 12px 30px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 12px 28px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
         border: none;
-        border-radius: 8px;
+        border-radius: 10px;
         cursor: pointer;
         font-size: 1rem;
-        transition: transform 0.2s;
+        font-weight: 600;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
       }
       .btn-search:hover {
         transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
       }
       .btn-clear {
         padding: 12px 20px;
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 8px;
+        background: transparent;
+        color: #9ca3af;
+        border: 1px solid rgba(156, 163, 175, 0.3);
+        border-radius: 10px;
         cursor: pointer;
         font-size: 1rem;
+        transition: all 0.2s;
+      }
+      .btn-clear:hover {
+        color: #f3f4f6;
+        border-color: rgba(243, 244, 246, 0.5);
       }
       .no-events {
         text-align: center;
-        color: #fff;
+        color: #9ca3af;
         padding: 60px 20px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
+        background: rgba(25, 30, 45, 0.6);
+        border-radius: 16px;
+        border: 1px solid rgba(102, 126, 234, 0.1);
       }
       .loading {
         text-align: center;
-        color: #fff;
+        color: #9ca3af;
         padding: 40px;
       }
       .nav-create-event {
@@ -79,23 +104,23 @@
       }
       .event-seats {
         display: inline-block;
-        padding: 4px 10px;
+        padding: 4px 12px;
         border-radius: 12px;
         font-size: 0.8rem;
         font-weight: 600;
         margin: 8px 0;
       }
       .seats-available {
-        background: rgba(40, 167, 69, 0.2);
-        color: #28a745;
+        background: rgba(74, 222, 128, 0.15);
+        color: #4ade80;
       }
       .seats-limited {
-        background: rgba(255, 193, 7, 0.2);
-        color: #ffc107;
+        background: rgba(251, 191, 36, 0.15);
+        color: #fbbf24;
       }
       .seats-full {
-        background: rgba(220, 53, 69, 0.2);
-        color: #dc3545;
+        background: rgba(248, 113, 113, 0.15);
+        color: #f87171;
       }
     </style>
   </head>
